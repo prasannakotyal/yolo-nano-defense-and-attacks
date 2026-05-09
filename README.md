@@ -94,5 +94,3 @@ The DPatch notebook additionally saves the learned patch image and a patch-train
 ## Reproducibility Notes
 
 The notebooks use a deterministic random seed and the DOTAv1 class list. Attack generation uses the native Ultralytics OBB loss so that gradients are aligned with the detector's actual training objective.
-
-For paper-ready experiments, run each notebook on the same dataset split and report the raw `metrics.csv` values together with the generated plots.
