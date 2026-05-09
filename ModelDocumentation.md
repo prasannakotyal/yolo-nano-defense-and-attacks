@@ -1,25 +1,29 @@
-# Target Architecture: YOLO-OBB Nano
+# Target Model: YOLO26n-OBB
 
-This file contains the pre-trained weights and configuration details for the target model evaluated throughout this repository. 
+The target model is the official Ultralytics `yolo26n-obb.pt` checkpoint.
 
-### The Model: `yolo26n-obb.pt`
-The primary target for all adversarial experiments in this project is the **Nano variant** of the YOLO (You Only Look Once) architecture, specifically optimized for **Oriented Bounding Boxes (OBB)**. 
+## Class Contract
 
-#### Why this specific architecture?
-1. **Aerial Imagery Focus:** Standard object detectors draw axis-aligned bounding boxes, which fail catastrophically on densely packed, rotated objects often found in aerial/satellite imagery (e.g., ships docked at an angle, parked airplanes). OBB models regress an extra angle parameter ($\theta$) to draw tightly fitted, rotated boxes.
-2. **The "Nano" Constraint:** The `n` (Nano) variant is intentionally chosen for its extremely low parameter count. Lightweight models are highly favored for deployment on edge devices (like drones or embedded flight systems). However, as our experiments prove, this lack of parameter capacity makes them disproportionately vulnerable to both adversarial attacks and "Catastrophic Forgetting" during defensive fine-tuning.
+`yolo26n-obb.pt` is a DOTAv1 OBB model with a 15-class detection head. The experiments therefore use only DOTAv1 classes:
 
-### Usage
-To load and run baseline inference with this model, ensure you have the `ultralytics` package installed:
+0. plane
+1. ship
+2. storage tank
+3. baseball diamond
+4. tennis court
+5. basketball court
+6. ground track field
+7. harbor
+8. bridge
+9. large vehicle
+10. small vehicle
+11. helicopter
+12. roundabout
+13. soccer ball field
+14. swimming pool
 
-```python
-from ultralytics import YOLO
+DOTA 1.5's extra `container crane` class is not used.
 
-# Load the target model
-model = YOLO("model/yolo26n-obb.pt")
+## Loading Check
 
-# Run inference on a sample DOTA image
-results = model.predict(source="path/to/sample_image.png", imgsz=1024)
-
-# Display results
-results[0].show()
+The notebooks assert that `model.model.model[-1].nc == 15` before running attacks or evaluation. This prevents accidentally comparing checkpoints with different heads.

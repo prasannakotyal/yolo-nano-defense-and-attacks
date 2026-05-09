@@ -1,34 +1,26 @@
-# Robust Aerial Detection: Adversarial Vulnerabilities in YOLO-OBB
+# Robust Aerial Detection: Adversarial Attacks on YOLO26n-OBB
 
-Detecting targets in high-resolution aerial imagery is a critical task for autonomous flight and satellite surveillance. However, the lightweight edge-models often deployed for these tasks harbor severe mathematical vulnerabilities.
+This repository contains Kaggle notebooks for evaluating white-box adversarial attacks against the official Ultralytics `yolo26n-obb.pt` model on DOTAv1.
 
-This repository explores the adversarial robustness of Nano-scale Oriented Bounding Box (OBB) object detectors. It documents the catastrophic failure modes of `YOLO-OBB` when exposed to various first-order digital adversarial attacks.
+## Fixed Experimental Contract
 
-## 📂 Repository Structure
+- Model: `yolo26n-obb.pt`
+- Task: Ultralytics OBB detection
+- Dataset: DOTAv1, 15 classes
+- Kaggle dataset: https://www.kaggle.com/datasets/chandlertimm/dota-data
+- Expected Kaggle mount: `/kaggle/input/dota-data`
+- Image size: `1024`
+- Metrics: precision, recall, mAP50, mAP50-95, and F1
 
-```text
-yolo-adversarial-robustness/
-│
-├── FGSM ATTACKS/                  # Single-step global adversarial attacks
-│   ├── Plots/                     # Evaluation visualizations (Accuracy, mAP, PR curves)
-│   ├── Documentation.md           # Deep-dive theory on Goodfellow's Linearity Hypothesis
-│   └── fgsm_attack.ipynb          # Baseline FGSM pipeline
-│
-├── PGD ATTACKS/                   # Iterative constrained optimization attacks
-│   ├── Plots/                     # Evaluation visualizations (Accuracy, mAP, PR curves)
-│   ├── Documentation.md           # Deep-dive theory on Min-Max saddle point optimization
-│   └── pgd_attack.ipynb           # Multi-step PGD pipeline
-│
-├── PGD DEFENSE/                   # Defense strategies against PGD attacks
-│   ├── Document.md                # Defense documentation and analysis                     
-|   ├── Plots/                     # Evaluation visualizations (Accuracy, mAP, PR curves)
-│   └── pgd-defense.ipynb          # PGD defense implementation and evaluation
-|   └── plot_generation_code.ipynb # Code for the generation of the plots
-│   └── best.pt                    # Model trained for 85 epochs
-|
-├── QUANTIZED ATTACKS/             # Attacks on quantized (edge-optimized) models
-│   ├── Plots/                     # Evaluation visualizations (Accuracy, mAP, PR curves)
-│   ├── Documentation.md           # Theory and results for quantized-model attacks
-│   └── quantized_attacks.ipynb    # Quantized attack generation and evaluation
-│
-└── ModelDocumentation.md          # Overall model details and baseline performance
+The notebooks fail loudly if the loaded model head is not 15-class DOTAv1. DOTA 1.5 and `container crane` are intentionally not used because the official YOLO26n-OBB checkpoint is trained on DOTAv1.
+
+## Notebooks
+
+- `FGSM ATTACKS/fgsm_attack.ipynb`: one-step untargeted FGSM using native Ultralytics OBB loss.
+- `PGD ATTACKS/pgd_attack.ipynb`: random-start iterative PGD using native Ultralytics OBB loss.
+- `QUANTIZED ATTACKS/quantized_attacks.ipynb`: iterative PGD with uint8 quantization after every projected step.
+- `DPATCH ATTACKS/dpatch_attack.ipynb`: universal patch training by maximizing native OBB loss.
+- `PGD DEFENSE/pgd-defense.ipynb`: 15-class PGD adversarial fine-tuning.
+- `PGD DEFENSE/plot_generation_code.ipynb`: baseline-vs-defended PGD evaluation plots.
+
+Each notebook writes fresh metrics and plots under `/kaggle/working/...`. Old plots and old 16-class weights were removed to avoid mixing incompatible results.
